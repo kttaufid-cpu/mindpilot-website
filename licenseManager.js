@@ -20,13 +20,28 @@ const LicenseManager = {
                 },
                 body: JSON.stringify({ email, password }),
             });
-            if (!response.ok) throw new Error("Login failed");
+            if (!response.ok) {
+                let errorMessage = "Login failed";
+                try {
+                    const errorData = await response.json();
+                    if (errorData && errorData.message) {
+                        errorMessage = errorData.message;
+                    }
+                } catch {
+                    errorMessage = `Login failed with status: ${response.status} ${response.statusText}`;
+                }
+                throw new Error(errorMessage);
+            }
             const data = await response.json();
             currentToken = data.token;
             await this.saveToken(currentToken);
-            return true;
-        } catch  {
-            return false;
+            return { success: true };
+        } catch (error) {
+            let message = error.message;
+            if (error.cause) {
+                message += ` (${error.cause.message || error.cause})`;
+            }
+            return { success: false, message };
         }
     },
 
