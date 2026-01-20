@@ -20,13 +20,20 @@ const LicenseManager = {
                 },
                 body: JSON.stringify({ email, password }),
             });
-            if (!response.ok) throw new Error("Login failed");
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || `Login failed with status: ${response.status}`);
+            }
             const data = await response.json();
             currentToken = data.token;
             await this.saveToken(currentToken);
-            return true;
-        } catch  {
-            return false;
+            return { success: true };
+        } catch (error) {
+            let message = error.message || "Unknown error";
+            if (error.cause) {
+                message += ` (${error.cause.message || error.cause})`;
+            }
+            return { success: false, message };
         }
     },
 
