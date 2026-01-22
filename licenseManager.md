@@ -40,16 +40,18 @@ Authenticates a user with the license server.
 
 **Returns:**
 
--   `Promise<boolean>`: `true` if login is successful, `false` otherwise
+-   `Promise<Object>`: An object containing:
+    -   `success` (boolean): `true` if login is successful, `false` otherwise
+    -   `message` (string, optional): Error message if login failed
 
 **Usage Example:**
 
 ```javascript
-const success = await LicenseManager.login("user@example.com", "password123");
-if (success) {
+const result = await LicenseManager.login("user@example.com", "password123");
+if (result.success) {
     console.log("Login successful");
 } else {
-    console.log("Login failed");
+    console.log(`Login failed: ${result.message}`);
 }
 ```
 

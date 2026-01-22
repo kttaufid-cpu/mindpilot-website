@@ -463,12 +463,12 @@ const UserInterface = {
     async handleLogin() {
         console.log(chalk.cyan("Please visit https://autocode.work to register if you haven't already."));
         const { email, password } = await this.promptForLogin();
-        const loggedIn = await LicenseManager.login(email, password);
-        if (loggedIn) {
+        const result = await LicenseManager.login(email, password);
+        if (result.success) {
             console.log(chalk.green("Login successful!"));
             return true;
         } else {
-            console.log(chalk.red("Login failed. Please try again."));
+            console.log(chalk.red(`Login failed: ${result.message}`));
             return false;
         }
     },
